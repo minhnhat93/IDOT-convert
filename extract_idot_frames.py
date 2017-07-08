@@ -28,20 +28,15 @@ if __name__ == '__main__':
   except:
     pass
 
-  try:
-    mkdir('IDOT_dataset/xml')
-  except:
-    pass
-
   prev_total_frame = 0
   for video in VIDEO_FILES:
+    print(video)
     vidcap = cv2.VideoCapture(video)
     frame_index = 1
     success = True
     width, height = None, None
     while success:
       success, image = vidcap.read()
-      print(frame_index + prev_total_frame)
       cv2.imwrite(join('IDOT_dataset/frames', "{}.jpg".format(frame_index + prev_total_frame)), image)     # save frame as JPEG file
       frame_index += 1
       if width is None:

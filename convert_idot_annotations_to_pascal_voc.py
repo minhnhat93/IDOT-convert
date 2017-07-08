@@ -90,11 +90,6 @@ def save_pascal_voc(fn, width, height, frame):
 
 if __name__ == '__main__':
   try:
-    mkdir('IDOT_dataset/frames')
-  except:
-    pass
-
-  try:
     mkdir('IDOT_dataset/xml')
   except:
     pass
