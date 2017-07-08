@@ -1,4 +1,5 @@
 import os
+import cv2
 from os import mkdir
 
 
@@ -21,8 +22,12 @@ test_set = open('IDOT_dataset/test.txt').read().splitlines()
 
 curr_dir = os.getcwd()
 for fn in train_set:
-  os.system('ln -s {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/train/frames/{}.jpg'.format(curr_dir, fn, fn))
-  os.system('ln -s {}/IDOT_dataset/xml/{}.xml IDOT_dataset/train/xml/{}.xml'.format(curr_dir, fn, fn))
+  im = cv2.imread('{}/IDOT_dataset/frames/{}.jpg')
+  if im is not None:
+    os.system('ln -s {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/train/frames/{}.jpg'.format(curr_dir, fn, fn))
+    os.system('ln -s {}/IDOT_dataset/xml/{}.xml IDOT_dataset/train/xml/{}.xml'.format(curr_dir, fn, fn))
 for fn in test_set:
-  os.system('ln -s {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/test/frames/{}.jpg'.format(curr_dir, fn, fn))
-  os.system('ln -s {}/IDOT_dataset/xml/{}.xml IDOT_dataset/test/xml/{}.xml'.format(curr_dir, fn, fn))
+  im = cv2.imread('{}/IDOT_dataset/frames/{}.jpg')
+  if im is not None:
+    os.system('ln -s {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/test/frames/{}.jpg'.format(curr_dir, fn, fn))
+    os.system('ln -s {}/IDOT_dataset/xml/{}.xml IDOT_dataset/test/xml/{}.xml'.format(curr_dir, fn, fn))
