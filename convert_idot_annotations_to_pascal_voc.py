@@ -43,9 +43,9 @@ ANNOTATION_FILES = [
 
 def read_annotation(fn, width, height, total_frames):
   frames_data = []
-  for j in range(total_frames):
+  for frame_index in range(total_frames):
     frames_data.append(dict(
-      frame_id=j,
+      frame_id=frame_index + 1,
       width=width,
       height=height,
       bboxes=[],
