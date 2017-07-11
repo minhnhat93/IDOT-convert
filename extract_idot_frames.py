@@ -32,14 +32,13 @@ if __name__ == '__main__':
   for video in VIDEO_FILES:
     print(video)
     vidcap = cv2.VideoCapture(video)
-    frame_index = 1
-    success = True
-    width, height = None, None
-    while success:
+    frame_count = 0
+    while True:
       success, image = vidcap.read()
-      cv2.imwrite(join('IDOT_dataset/frames', "{}.jpg".format(frame_index + prev_total_frame)), image)     # save frame as JPEG file
-      frame_index += 1
-      if width is None:
-        width, height, channels = image.shape
-    total_frames_in_this_video = frame_index - 1
+      if success:
+        cv2.imwrite(join('IDOT_dataset/frames', "{}.jpg".format(frame_count + prev_total_frame)), image)     # save frame as JPEG file
+        frame_count += 1
+      else:
+        break
+    total_frames_in_this_video = frame_count
     prev_total_frame += total_frames_in_this_video
