@@ -26,6 +26,8 @@ for fn in train_set:
   if im is not None:
     os.system('ln -s {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/train/frames/{}.jpg'.format(curr_dir, fn, fn))
     os.system('ln -s {}/IDOT_dataset/xml/{}.xml IDOT_dataset/train/xml/{}.xml'.format(curr_dir, fn, fn))
+#     os.system('cp {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/train/frames/{}.jpg'.format(curr_dir, fn, fn))
+#     os.system('cp {}/IDOT_dataset/xml/{}.xml IDOT_dataset/train/xml/{}.xml'.format(curr_dir, fn, fn))
   else:
     print("Image {} is unreadable!".format(fn))
 for fn in test_set:
@@ -33,5 +35,7 @@ for fn in test_set:
   if im is not None:
     os.system('ln -s {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/test/frames/{}.jpg'.format(curr_dir, fn, fn))
     os.system('ln -s {}/IDOT_dataset/xml/{}.xml IDOT_dataset/test/xml/{}.xml'.format(curr_dir, fn, fn))
+#    os.system('cp {}/IDOT_dataset/frames/{}.jpg IDOT_dataset/test/frames/{}.jpg'.format(curr_dir, fn, fn))
+#    os.system('cp {}/IDOT_dataset/xml/{}.xml IDOT_dataset/test/xml/{}.xml'.format(curr_dir, fn, fn))
   else:
     print("Image {} is unreadable!".format(fn))

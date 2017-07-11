@@ -61,7 +61,7 @@ def read_annotation(fn, width, height, total_frames):
     frames_data[frame_id]['bboxes'].append(dict(
       bbox=bbox[1:5],
       difficult=difficult,
-      name=name,
+      name=name[1:-1],
     ))
   return frames_data
 
