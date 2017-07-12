@@ -4,7 +4,6 @@ import xml.etree.ElementTree as ET
 import os
 import json
 import argparse
-import _pickle
 
 
 get_fn_without_ext = lambda fn: os.path.splitext(fn)[0]
@@ -20,7 +19,7 @@ def parse_pascal_voc(dir_name):
   annotations = os.listdir('.')
   annotations = glob.glob(str(annotations) + '*.xml')
 
-  for i, file in enumerate(annotations):
+  for file in annotations:
     root = ET.parse(file).getroot()
     frame_id = get_fn_without_ext(file)
     R = dict(
@@ -35,9 +34,9 @@ def parse_pascal_voc(dir_name):
       xmax = int(float(xmlbox.find('xmax').text))
       ymin = int(float(xmlbox.find('ymin').text))
       ymax = int(float(xmlbox.find('ymax').text))
-      R['bboxes'] += [xmin, ymin, xmax, ymax]
-    R['detected'] = [False] * len(R)
+      R['bboxes'].append([xmin, ymin, xmax, ymax])
     R['bboxes'] = np.asarray(R['bboxes'])
+    R['detected'] = [False] * len(R['bboxes'])
     frames[str(frame_id)] = R
 
   os.chdir(cur_dir)
@@ -53,9 +52,9 @@ def parse_json(dir_name):
   annotations = os.listdir('.')
   annotations = glob.glob(str(annotations) + '*.json')
 
-  for file in enumerate(annotations):
+  for file in annotations:
     frame_id = get_fn_without_ext(file)
-    bboxes = json.load(file)
+    bboxes = json.load(open(file))
     for bbox in bboxes:
       frames.append([frame_id, -1, bbox['topleft']['x'], bbox['topleft']['y'], bbox['bottomright']['x'],
                      bbox['bottomright']['y'], bbox['confidence']])
@@ -67,7 +66,8 @@ def parse_json(dir_name):
 def parse_txt_detection(fn):
   # assume MOT format:
   # frame_id, id, x, y, width, height, confidence
-  data = np.loadtxt(fn)
+  data = np.genfromtxt(fn, dtype=str, delimiter=',')
+  data = data[:, 0:6].astype(float)
   data[:, 4] = data[:, 2] + data[:, 4] - 1
   data[:, 5] = data[:, 3] + data[:, 5] - 1
   return data
@@ -77,16 +77,21 @@ def parse_txt_groundtruth(fn):
   # assume MOT format:
   # frame_id, id, x, y, width, height
   frames = dict()
-  data = np.loadtxt(fn)
+  data = np.genfromtxt(fn, dtype=str, delimiter=',')
+  data = data[:, 0:6].astype(float)
   for entry in data:
     frame_id, _, xmin, ymin, width, height = entry
+    frame_id = int(frame_id)
     if str(frame_id) in frames:
       frames[str(frame_id)]['bboxes'].append([xmin, ymin, xmin + width - 1, ymin + height - 1])
       frames[str(frame_id)]['detected'].append(False)
     else:
-      frames[str(frame_id)]['bboxes'] = [[xmin, ymin, xmin + width - 1, ymin + height - 1]]
-      frames[str(frame_id)]['detected'] = [False]
-  for frame in frames:
+      frames[str(frame_id)] = dict(
+        frame_id=frame_id,
+        bboxes=[[xmin, ymin, xmin + width - 1, ymin + height - 1]],
+        detected=[False],
+      )
+  for frame in frames.values():
     frame['bboxes'] = np.asarray(frame['bboxes'])
   return frames
 
@@ -111,6 +116,10 @@ def compute_pre_rec(gt, detection, ovthresh=0.5):
   nd = len(image_ids)
   tp = np.zeros(nd)
   fp = np.zeros(nd)
+
+  npos = 0
+  for R in gt.values():
+    npos += len(R['bboxes'])
 
   for d in range(nd):
     R = gt[str(image_ids[d])]
@@ -151,7 +160,7 @@ def compute_pre_rec(gt, detection, ovthresh=0.5):
   # compute precision recall
   fp = np.cumsum(fp)
   tp = np.cumsum(tp)
-  rec = tp / float(len(gt))
+  rec = tp / float(npos)
   # avoid divide by zero in case the first detection matches a difficult
   # ground truth
   prec = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
@@ -171,19 +180,24 @@ def parse_args():
 
 
 if __name__ == '__main__':
-  args = parse_args()
-  if args.gt_type == 'pascal_voc':
-    gt = parse_pascal_voc(args.gt_path)
-  elif args.gt_type == 'txt':
-    gt = parse_txt_groundtruth(args.gt_path)
+  # args = parse_args()
+  # if args.gt_type == 'pascal_voc':
+  #   gt = parse_pascal_voc(args.gt_path)
+  # elif args.gt_type == 'txt':
+  #   gt = parse_txt_groundtruth(args.gt_path)
+  #
+  # if args.detection_type == 'json':
+  #   detection = parse_json(args.detection_path)
+  # elif args.detection_type == 'txt':
+  #   detection = parse_txt_detection(args.detection_path)
+  #
+  # rec, prec = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
+  # with open(args.output_path, 'w') as f:
+  #   json.dump(list(dict(recall=rec, precision=prec)), f)
+  # print("Recall: {}".format(rec[-1]))
+  # print("Precision: {}".format(prec[-1]))
 
-  if args.detection_type == 'json':
-    detection = parse_json(args.detection_path)
-  elif args.detection_type == 'txt':
-    detection = parse_txt_detection(args.detection_path)
-
-  rec, prec = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
-  with open(args.output_path, 'wb') as f:
-    f.write(dict(recall=rec, precision=prec))
-  print("Recall: {}".format(rec))
-  print("Precision: {}".format(prec))
+  # x = parse_pascal_voc('IDOT_dataset/xml')
+  # print(x)
+  y = parse_txt_groundtruth('/home/nhat/M-30-Large@0.1.txt')
+  print(y)
