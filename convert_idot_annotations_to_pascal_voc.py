@@ -90,10 +90,7 @@ def save_pascal_voc(fn, index, width, height, frame):
     ET.SubElement(bndbox_xml, 'ymin').text = str(ymin)
     ET.SubElement(bndbox_xml, 'xmax').text = str(xmax)
     ET.SubElement(bndbox_xml, 'ymax').text = str(ymax)
-  if len(frame['bboxes']) > 0:
-    annot_str = ET.tostring(annotation)
-  else:
-    annot_str = ''.encode()
+  annot_str = ET.tostring(annotation)
   with open(fn, 'wb') as f:
     f.write(annot_str)
 
