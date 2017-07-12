@@ -198,7 +198,7 @@ if __name__ == '__main__':
 
   rec, prec, scores = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
   with open(args.output_path, 'w') as f:
-    json.dump(list(dict(recall=rec, precision=prec, scores=scores)), f)
+    json.dump(dict(recall=rec, precision=prec, scores=scores), f)
   print("Recall: {}".format(rec[-1]))
   print("Precision: {}".format(prec[-1]))
 
