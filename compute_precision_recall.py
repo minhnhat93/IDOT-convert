@@ -67,7 +67,7 @@ def parse_txt_detection(fn):
   # assume MOT format:
   # frame_id, id, x, y, width, height, confidence
   data = np.genfromtxt(fn, dtype=str, delimiter=',')
-  data = data[:, 0:6].astype(float)
+  data = data[:, 0:7].astype(float)
   data[:, 4] = data[:, 2] + data[:, 4] - 1
   data[:, 5] = data[:, 3] + data[:, 5] - 1
   return data
@@ -111,7 +111,7 @@ def compute_pre_rec(gt, detection, ovthresh=0.5):
   sorted_ind = np.argsort(-confidence)
   sorted_scores = np.sort(-confidence)
   BB = BB[sorted_ind, :]
-  image_ids = [image_ids[x] for x in sorted_ind]
+  image_ids = [int(image_ids[x]) for x in sorted_ind]
 
   nd = len(image_ids)
   tp = np.zeros(nd)
@@ -122,6 +122,9 @@ def compute_pre_rec(gt, detection, ovthresh=0.5):
     npos += len(R['bboxes'])
 
   for d in range(nd):
+    if str(image_ids[d]) not in gt:
+      fp[d] = 1
+      continue
     R = gt[str(image_ids[d])]
     BBGT = R['bboxes']
     bb = BB[d, :].astype(float)
@@ -164,7 +167,7 @@ def compute_pre_rec(gt, detection, ovthresh=0.5):
   # avoid divide by zero in case the first detection matches a difficult
   # ground truth
   prec = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
-  return rec, prec
+  return rec, prec, sorted_scores
 
 
 def parse_args():
@@ -174,7 +177,7 @@ def parse_args():
   parser.add_argument('detection_type', choices=['json', 'txt'], type=str)
   parser.add_argument('detection_path', type=str)
   parser.add_argument('--ovthresh', default=0.5, type=float)
-  parser.add_argument('--output_path', default='rec_prec.pkl', type=str)
+  parser.add_argument('--output_path', default='rec_prec_scores.pkl', type=str)
   args = parser.parse_args()
   return args
 
@@ -193,9 +196,9 @@ if __name__ == '__main__':
   elif args.detection_type == 'txt':
     detection = parse_txt_detection(args.detection_path)
 
-  rec, prec = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
+  rec, prec, scores = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
   with open(args.output_path, 'w') as f:
-    json.dump(list(dict(recall=rec, precision=prec)), f)
+    json.dump(list(dict(recall=rec, precision=prec, scores=scores)), f)
   print("Recall: {}".format(rec[-1]))
   print("Precision: {}".format(prec[-1]))
 
