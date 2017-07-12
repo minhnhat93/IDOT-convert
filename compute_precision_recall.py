@@ -197,9 +197,9 @@ if __name__ == '__main__':
     detection = parse_txt_detection(args.detection_path)
 
   rec, prec, scores = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
-  with open(args.output_path, 'w') as f:
-    json.dump(dict(recall=rec, precision=prec, scores=scores), f)
   print("Recall: {}".format(rec[-1]))
   print("Precision: {}".format(prec[-1]))
+  with open(args.output_path, 'w') as f:
+    json.dump([rec, prec, scores], f)
 
 
