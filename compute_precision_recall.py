@@ -179,25 +179,24 @@ def parse_args():
   return args
 
 
+# This cript assume the frame id in both detection and ground truth are the same
+# In pascal_voc and json reading the frame id will be deduced from the file names.
 if __name__ == '__main__':
-  # args = parse_args()
-  # if args.gt_type == 'pascal_voc':
-  #   gt = parse_pascal_voc(args.gt_path)
-  # elif args.gt_type == 'txt':
-  #   gt = parse_txt_groundtruth(args.gt_path)
-  #
-  # if args.detection_type == 'json':
-  #   detection = parse_json(args.detection_path)
-  # elif args.detection_type == 'txt':
-  #   detection = parse_txt_detection(args.detection_path)
-  #
-  # rec, prec = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
-  # with open(args.output_path, 'w') as f:
-  #   json.dump(list(dict(recall=rec, precision=prec)), f)
-  # print("Recall: {}".format(rec[-1]))
-  # print("Precision: {}".format(prec[-1]))
+  args = parse_args()
+  if args.gt_type == 'pascal_voc':
+    gt = parse_pascal_voc(args.gt_path)
+  elif args.gt_type == 'txt':
+    gt = parse_txt_groundtruth(args.gt_path)
 
-  # x = parse_pascal_voc('IDOT_dataset/xml')
-  # print(x)
-  y = parse_txt_groundtruth('/home/nhat/M-30-Large@0.1.txt')
-  print(y)
+  if args.detection_type == 'json':
+    detection = parse_json(args.detection_path)
+  elif args.detection_type == 'txt':
+    detection = parse_txt_detection(args.detection_path)
+
+  rec, prec = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
+  with open(args.output_path, 'w') as f:
+    json.dump(list(dict(recall=rec, precision=prec)), f)
+  print("Recall: {}".format(rec[-1]))
+  print("Precision: {}".format(prec[-1]))
+
+
