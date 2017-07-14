@@ -4,6 +4,7 @@ import xml.etree.ElementTree as ET
 import os
 import json
 import argparse
+import _pickle
 
 
 get_fn_without_ext = lambda fn: os.path.splitext(fn)[0]
@@ -167,7 +168,7 @@ def compute_pre_rec(gt, detection, ovthresh=0.5):
   # avoid divide by zero in case the first detection matches a difficult
   # ground truth
   prec = tp / np.maximum(tp + fp, np.finfo(np.float64).eps)
-  return rec, prec, sorted_scores
+  return rec, prec, -sorted_scores
 
 
 def parse_args():
@@ -199,7 +200,7 @@ if __name__ == '__main__':
   rec, prec, scores = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
   print("Recall: {}".format(rec[-1]))
   print("Precision: {}".format(prec[-1]))
-  with open(args.output_path, 'w') as f:
-    json.dump([rec, prec, scores], f)
+  with open(args.output_path, 'wb') as f:
+    _pickle.dump([rec, prec, scores], f)
 
 
