@@ -102,8 +102,8 @@ if __name__ == '__main__':
     pass
 
   prev_total_frame = 0
-  f_training = open('IDOT_dataset/train.txt', 'wb')
-  f_testing = open('IDOT_dataset/test.txt', 'wb')
+  f_training = open('IDOT_dataset/train_index.txt', 'wb')
+  f_testing = open('IDOT_dataset/test_index.txt', 'wb')
   for video, annotation in zip(VIDEO_FILES, ANNOTATION_FILES):
     print(annotation)
     vidcap = cv2.VideoCapture(video)

@@ -24,7 +24,7 @@ VIDEO_FILES = [
 
 if __name__ == '__main__':
   try:
-    mkdir('IDOT_dataset/frames')
+    mkdir('IDOT_dataset/images')
   except:
     pass
 
@@ -36,7 +36,7 @@ if __name__ == '__main__':
     while True:
       success, image = vidcap.read()
       if success:
-        cv2.imwrite(join('IDOT_dataset/frames', "{}.jpg".format(frame_count + prev_total_frame)), image)     # save frame as JPEG file
+        cv2.imwrite(join('IDOT_dataset/images', "{}.jpg".format(frame_count + prev_total_frame)), image)     # save frame as JPEG file
         frame_count += 1
       else:
         break

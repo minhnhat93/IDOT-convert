@@ -2,7 +2,7 @@ import numpy as np
 import os
 import argparse
 import _pickle
-from utils.io import *
+from utils.annotation_parsing import *
 
 
 def compute_pre_rec(gt, detection, ovthresh=0.5):
@@ -110,5 +110,3 @@ if __name__ == '__main__':
   print("Precision: {}".format(prec[-1]))
   with open(args.output_path, 'wb') as f:
     _pickle.dump([rec, prec, scores], f)
-
-
