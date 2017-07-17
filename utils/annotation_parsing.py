@@ -126,6 +126,7 @@ def fix_GRAM_RTM_annotation(in_dir, out_dir):
   os.chdir(cur_dir)
 
 def write_MOT_detection(fn, det, threshold):
+  det = [list(x) for x in det]
   with open(fn, 'w') as f:
     for bbox in sorted(det):
       if bbox[6] > threshold:
@@ -166,4 +167,3 @@ def get_precision_recall_at_threshold(fn, confidence_threshold):
     recall=rec[loc],
     precision=prec[loc]
   )
-
