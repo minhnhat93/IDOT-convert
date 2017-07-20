@@ -103,6 +103,14 @@ def parse_txt_detection(fn):
   data[:, 5] = data[:, 3] + data[:, 5] - 1
   return data
 
+def convert_ground_truth_to_detection(frames):
+  det = []
+  for frame in frames.values():
+    frame_id = frame['frame_id']
+    for bbox in frame['bboxes']:
+      det.append(np.asarray([frame_id, -1, bbox[0], bbox[1], bbox[2], bbox[3], 1.0]))
+  det = np.vstack(det)
+  return det
 
 def fix_GRAM_RTM_annotation(in_dir, out_dir):
   try:
@@ -131,7 +139,7 @@ def write_MOT_detection(fn, det, threshold):
     for bbox in sorted(det):
       if bbox[6] > threshold:
         f.write(
-          '{}, -1, {:.2f}, {:.2f}, {:.2f}, {:.2f}, {:.2f}, -1, -1, -1\n'.format(bbox[0], bbox[2], bbox[3],
+          '{:d}, -1, {:.2f}, {:.2f}, {:.2f}, {:.2f}, {:.2f}, -1, -1, -1\n'.format(int(bbox[0]), bbox[2], bbox[3],
                                                                                 bbox[4] - bbox[2] + 1,
                                                                                 bbox[5] - bbox[3] + 1, bbox[6]))
 

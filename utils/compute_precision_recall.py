@@ -2,7 +2,7 @@ import numpy as np
 import os
 import argparse
 import _pickle
-from utils.annotation_parsing import *
+from annotation_parsing import *
 
 
 def compute_pre_rec(gt, detection, ovthresh=0.5):

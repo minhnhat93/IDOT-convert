@@ -1,4 +1,4 @@
-from utils.annotation_parsing import parse_json_detection, write_MOT_detection
+from annotation_parsing import parse_json_detection, write_MOT_detection
 import argparse
 import os
 
