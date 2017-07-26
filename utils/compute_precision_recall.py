@@ -108,5 +108,6 @@ if __name__ == '__main__':
   rec, prec, scores = compute_pre_rec(gt=gt, detection=detection, ovthresh=args.ovthresh)
   print("Recall: {}".format(rec[-1]))
   print("Precision: {}".format(prec[-1]))
-  with open(args.output_path, 'wb') as f:
-    _pickle.dump([rec, prec, scores], f)
+  if args.output_path:
+      with open(args.output_path, 'wb') as f:
+        _pickle.dump([rec, prec, scores], f)

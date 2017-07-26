@@ -83,6 +83,8 @@ def save_pascal_voc(fn, index, width, height, frame):
     ymin = bbox[1]
     xmax = bbox[0] + bbox[2] - 1
     ymax = bbox[1] + bbox[3] - 1
+    assert ymax < height
+    assert xmax < width
     object_xml = ET.SubElement(annotation, 'object')
     ET.SubElement(object_xml, 'name').text = name
     bndbox_xml = ET.SubElement(object_xml, 'bndbox')

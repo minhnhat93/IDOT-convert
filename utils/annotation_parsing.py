@@ -109,10 +109,12 @@ def convert_ground_truth_to_detection(frames):
     frame_id = frame['frame_id']
     for bbox in frame['bboxes']:
       det.append(np.asarray([frame_id, -1, bbox[0], bbox[1], bbox[2], bbox[3], 1.0]))
-  det = np.vstack(det)
+  det = np.vstack(det).astype(float)
+  sorted_ids = np.argsort(det[:, 0])
+  det = det[sorted_ids, :]
   return det
 
-def fix_GRAM_RTM_annotation(in_dir, out_dir):
+def fix_GRAM_RTM_annotation(in_dir, out_dir, y_remove=None):
   try:
     os.mkdir(out_dir)
   except:
@@ -124,11 +126,19 @@ def fix_GRAM_RTM_annotation(in_dir, out_dir):
   for file in annotations:
     root = ET.parse(file).getroot()
 
-    for obj in root.iter('object'):
+    j = 0
+    while j < len(root.findall('object')):
       # name = obj.find('class').text
+      obj = root.findall('object')[j]
       name = 'vehicle'
       ET.SubElement(obj, 'name').text = name
       ET.SubElement(obj, 'difficulty').text = str(0)
+      xmlbox = obj.find('bndbox')
+      ymax = int(float(xmlbox.find('ymax').text))
+      if y_remove is not None and ymax < y_remove:
+          root.remove(obj)
+      else:
+          j += 1
     with open(os.path.join(out_dir, os.path.basename(file)), 'wb') as f:
       f.write(ET.tostring(root))
   os.chdir(cur_dir)

@@ -77,8 +77,6 @@ if __name__ == '__main__':
     roi = None
   true_bboxes = parse_txt_groundtruth(args.input)
   true_bboxes = convert_ground_truth_to_detection(true_bboxes)
-  sorted_ids = np.argsort(true_bboxes[:, 0])
-  true_bboxes = true_bboxes[sorted_ids, :]
   # delete
   bboxes_delete_scores = np.random.rand(len(true_bboxes))
   sorted_ids = np.argsort(bboxes_delete_scores)

@@ -2,3 +2,8 @@
 /CRV_dataset.zip
 /IDOT_dataset/
 !/IDOT_dataset/labels.txt
+/idot_finetune/idot_train.txt
+/idot_finetune/idot_test.txt
+/gram_finetune/gram_test.txt
+/gram_finetune/splits/
+/gram_finetune/gram_train.txt
